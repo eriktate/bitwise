@@ -24,15 +24,35 @@ typedef struct BufHdr{
 #define buf_push(b, x) (buf__fit(b, 1), b[buf_len(b)] = (x), buf__hdr(b)->len++)
 #define buf_free(b) ((b) ? free(buf__hdr(b)) : 0)
 
+void *xrealloc(void *ptr, size_t num_bytes) {
+	ptr = realloc(ptr, num_bytes);
+	if (!ptr) {
+		perror("xrealloc failed");
+		exit(1);
+	}
+
+	return ptr;
+}
+
+void *xmalloc(size_t num_bytes) {
+	void *ptr = malloc(num_bytes);
+	if (!ptr) {
+		perror("malloc failed");
+		exit(1);
+	}
+
+	return ptr;
+}
+
 void *buf__grow(const void *buf, size_t new_len, size_t elem_size) {
 	size_t new_cap = MAX(1 + 2 * buf_cap(buf), new_len);
 	assert(new_len <= new_cap);
 	size_t new_size = offsetof(BufHdr, buf) + new_cap * elem_size;
 	BufHdr *new_hdr;
 	if (buf) {
-		new_hdr = realloc(buf__hdr(buf), new_size);
+		new_hdr = xrealloc(buf__hdr(buf), new_size);
 	} else {
-		new_hdr = malloc(new_size);
+		new_hdr = xmalloc(new_size);
 		new_hdr->len = 0;
 	}
 
@@ -126,6 +146,32 @@ void next_token() {
 		case 'x':
 		case 'y':
 		case 'z':
+		// case 'a':
+		// case 'b':
+		// case 'c':
+		// case 'd':
+		// case 'e':
+		// case 'f':
+		// case 'g':
+		// case 'h':
+		// case 'i':
+		// case 'j':
+		// case 'k':
+		// case 'l':
+		// case 'm':
+		// case 'n':
+		// case 'o':
+		// case 'p':
+		// case 'q':
+		// case 'r':
+		// case 's':
+		// case 't':
+		// case 'u':
+		// case 'v':
+		// case 'w':
+		// case 'x':
+		// case 'y':
+		// case 'z':
 		case '_': {
 			const char *start = stream++;
 			while(isalnum(*stream) || *stream == '_') {
@@ -167,7 +213,7 @@ void lex_test() {
 }
 
 int main(int argc, char **argv) {
-	//buf_test();
-	lex_test();
+	buf_test();
+	// lex_test();
 	return 0;
 }
